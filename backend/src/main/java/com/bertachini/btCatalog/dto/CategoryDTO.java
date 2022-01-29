@@ -13,7 +13,6 @@ public class CategoryDTO implements Serializable{
 	public CategoryDTO(Category category) {
 		this.id = category.getId();
 		this.name = category.getName();
-		
 	}
 	
 	public CategoryDTO() {
