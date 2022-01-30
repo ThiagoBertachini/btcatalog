@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.bertachini.btCatalog.dto.CategoryDTO;
+import com.bertachini.btCatalog.entities.Category;
 import com.bertachini.btCatalog.repositories.CategoryRepository;
 import com.bertachini.btCatalog.services.exceptions.EntityNotFoundException;
 
@@ -43,14 +44,26 @@ public class CategoryService {
 	/*Busca categorias do catalago de banco de dados por ID do produto*/
 	@ExceptionHandler
 	@Transactional(readOnly = true)
-	public CategoryDTO findaByID(Long id) {
+	public CategoryDTO findByID(Long id) {
 		return new CategoryDTO(repository.findById(id)
 				.orElseThrow(()-> new EntityNotFoundException("Entity not found")));
-		}
 		
 		// MANEIRA EXTENDIDA
 		//Optional<Category> obj = repository.findById(id);
 		//Category entity = obj.get();
 		//return new CategoryDTO(entity);
 	}
+	
+	@Transactional(readOnly = true)
+	public CategoryDTO insert(CategoryDTO categoryDTO) {
+		Category entity = new Category();
+		entity.setName(categoryDTO.getName());
+		
+		return new CategoryDTO(repository.save(entity));
+	}
+	
+	
+	}
+
+	
 

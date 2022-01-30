@@ -14,7 +14,7 @@ import com.bertachini.btCatalog.services.exceptions.EntityNotFoundException;
 @ControllerAdvice
 public class ResourceExcpetionHandler {
 	
-	@ExceptionHandler
+	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<StandardError> entityNotFound(EntityNotFoundException e, HttpServletRequest request){
 		StandardError error = new StandardError();
 		error.setTimestamp(Instant.now());
