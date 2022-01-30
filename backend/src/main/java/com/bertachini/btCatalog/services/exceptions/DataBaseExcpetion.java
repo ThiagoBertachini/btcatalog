@@ -1,9 +1,9 @@
 package com.bertachini.btCatalog.services.exceptions;
 
-public class ResourceNotFoundException extends RuntimeException{
+public class DataBaseExcpetion extends RuntimeException {
 	private static final long serialVersionUID = 1L;
-
-	public ResourceNotFoundException(String msg) {
+	
+	public DataBaseExcpetion(String msg) {
 		super(msg);
 	}
 

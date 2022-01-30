@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.bertachini.btCatalog.services.exceptions.DataBaseExcpetion;
 import com.bertachini.btCatalog.services.exceptions.ResourceNotFoundException;
 
 @ControllerAdvice
@@ -17,14 +18,27 @@ public class ResourceExcpetionHandler {
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException e, HttpServletRequest request){
 		StandardError error = new StandardError();
+		HttpStatus status = HttpStatus.NOT_FOUND;
 		error.setTimestamp(Instant.now());
-		error.setStatus(HttpStatus.NOT_FOUND.value());
+		error.setStatus(status.value());
 		error.setError("Resource not found");
 		error.setMessege(e.getMessage());
 		error.setPath(request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);		
+		return ResponseEntity.status(status).body(error);		
 	}
 
+	@ExceptionHandler(DataBaseExcpetion.class)
+	public ResponseEntity<StandardError> dataBaseViolation(DataBaseExcpetion e, HttpServletRequest request){
+		StandardError error = new StandardError();
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		error.setTimestamp(Instant.now());
+		error.setStatus(status.value());
+		error.setError("DataBase Exception");
+		error.setMessege(e.getMessage());
+		error.setPath(request.getRequestURI());
+		return ResponseEntity.status(status).body(error);		
+	}
+	
 	
 	
 }
