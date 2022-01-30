@@ -3,6 +3,8 @@ package com.bertachini.btCatalog.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.bertachini.btCatalog.dto.CategoryDTO;
 import com.bertachini.btCatalog.entities.Category;
 import com.bertachini.btCatalog.repositories.CategoryRepository;
-import com.bertachini.btCatalog.services.exceptions.EntityNotFoundException;
+import com.bertachini.btCatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class CategoryService {
@@ -46,7 +48,7 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public CategoryDTO findByID(Long id) {
 		return new CategoryDTO(repository.findById(id)
-				.orElseThrow(()-> new EntityNotFoundException("Entity not found")));
+				.orElseThrow(()-> new ResourceNotFoundException("Entity not found")));
 		
 		// MANEIRA EXTENDIDA
 		//Optional<Category> obj = repository.findById(id);
@@ -60,6 +62,20 @@ public class CategoryService {
 		entity.setName(categoryDTO.getName());
 		
 		return new CategoryDTO(repository.save(entity));
+	}
+
+	@Transactional(readOnly = true)
+	public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
+		//getOne não chega no banco de dados
+		try {
+		Category entity = repository.getOne(id);
+		entity.setName(categoryDTO.getName());
+		entity = repository.save(entity);
+		return new CategoryDTO(entity);
+		}catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Id not found");
+		}
+	
 	}
 	
 	
