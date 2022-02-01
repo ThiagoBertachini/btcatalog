@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.bertachini.btCatalog.dto.CategoryDTO;
 import com.bertachini.btCatalog.dto.ProductDTO;
+import com.bertachini.btCatalog.entities.Category;
 import com.bertachini.btCatalog.entities.Product;
+import com.bertachini.btCatalog.repositories.CategoryRepository;
 import com.bertachini.btCatalog.repositories.ProductRepository;
 import com.bertachini.btCatalog.services.exceptions.DataBaseExcpetion;
 import com.bertachini.btCatalog.services.exceptions.ResourceNotFoundException;
@@ -24,6 +27,9 @@ public class ProductService {
 	
 	@Autowired
 	private ProductRepository repository;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	/*Busca lista de categorias dos produtos(todas) do catalago de banco de dados*/
 	@Transactional(readOnly = true)
@@ -57,19 +63,20 @@ public class ProductService {
 	}
 	
 	@Transactional(readOnly = true)
-	public ProductDTO insert(ProductDTO categoryDTO) {
+	public ProductDTO insert(ProductDTO dto) {
 		Product entity = new Product();
-		//entity.setName(categoryDTO.getName());
-		
-		return new ProductDTO(repository.save(entity));
+		copyDtoToEntity(dto, entity);
+		entity = repository.save(entity);
+		return new ProductDTO(entity);
 	}
 
+
 	@Transactional(readOnly = true)
-	public ProductDTO update(Long id, ProductDTO categoryDTO) {
+	public ProductDTO update(Long id, ProductDTO dto) {
 		//getOne não chega no banco de dados
 		try {
 		Product entity = repository.getOne(id);
-		//entity.setName(categoryDTO.getName());
+		copyDtoToEntity(dto, entity);
 		entity = repository.save(entity);
 		return new ProductDTO(entity);
 		}catch(EntityNotFoundException e) {
@@ -85,12 +92,29 @@ public class ProductService {
 			throw new ResourceNotFoundException("id not found " + id);
 		}catch(DataIntegrityViolationException e) {
 			throw new DataBaseExcpetion("Integrity Violetion");
+		}	
+	}
+	
+	
+	private void copyDtoToEntity(ProductDTO dto, Product entity) {
+		entity.setName(dto.getName());
+		entity.setDescription(dto.getDescription());
+		entity.setDate(dto.getDate());
+		entity.setImgUrl(dto.getImgUrl());
+		entity.setPrice(dto.getPrice());
+		
+		entity.getCategories().clear();
+		
+		for (CategoryDTO catDto : dto.getCategories()) {
+			Category category = categoryRepository.getOne(catDto.getId());
+			entity.getCategories().add(category);
+		 	
 		}
 		
 	}
 	
 	
-	}
+}
 
 	
 
