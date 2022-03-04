@@ -1,15 +1,16 @@
 package com.bertachini.btCatalog.services;
 
+import java.util.Optional;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.bertachini.btCatalog.dto.CategoryDTO;
 import com.bertachini.btCatalog.entities.Category;
@@ -25,45 +26,25 @@ public class CategoryService {
 	
 	/*Busca lista de categorias dos produtos(todas) do catalago de banco de dados*/
 	@Transactional(readOnly = true)
-	public Page<CategoryDTO> findAllPaged(PageRequest pageRequest){				
-		return repository.findAll(pageRequest)
-				.map(x -> new CategoryDTO(x));
-		
-		//List<CategoryDTO> list = repository.findaAll();
-		//return list.stram()...
-		
-		//return list.stream()
-		//	.map(x -> new CategoryDTO(x)).collect(Collectors.toList());
-	
-		/* SEM LAMBDA
-		 * List<CategoryDTO> dto = new ArrayList<>();
-		 * 
-		 * for(Category cat : list) { 
-		 * dto.add(new CategoryDTO(cat)); 
-		 * } 
-		 * return dto;
-		 */	
+	public Page<CategoryDTO> findAllPaged(Pageable pageable){				
+		Page<Category> list = repository.findAll(pageable);
+		return list.map(x -> new CategoryDTO(x));
 	}
 	
 	/*Busca categorias do catalago de banco de dados por ID do produto*/
-	@ExceptionHandler
 	@Transactional(readOnly = true)
-	public CategoryDTO findByID(Long id) {
-		return new CategoryDTO(repository.findById(id)
-				.orElseThrow(()-> new ResourceNotFoundException("Entity not found")));
-		
-		// MANEIRA EXTENDIDA
-		//Optional<Category> obj = repository.findById(id);
-		//Category entity = obj.get();
-		//return new CategoryDTO(entity);
+	public CategoryDTO findById(Long id) {
+		Optional<Category> obj = repository.findById(id);
+		Category entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+		return new CategoryDTO(entity);
 	}
 	
-	@Transactional(readOnly = true)
-	public CategoryDTO insert(CategoryDTO categoryDTO) {
+	@Transactional
+	public CategoryDTO insert(CategoryDTO dto) {
 		Category entity = new Category();
-		entity.setName(categoryDTO.getName());
-		
-		return new CategoryDTO(repository.save(entity));
+		entity.setName(dto.getName());
+		entity = repository.save(entity);
+		return new CategoryDTO(entity);
 	}
 
 	@Transactional(readOnly = true)

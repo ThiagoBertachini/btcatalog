@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,22 +30,15 @@ public class ProductResource {
 	private ProductService service;
 	
 	@GetMapping
-	public ResponseEntity<Page<ProductDTO>> findAll(
-			@RequestParam(value = "page", defaultValue = "0") Integer page, 
-			@RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage, 
-			@RequestParam(value = "direction", defaultValue = "ASC") String direction, 
-			@RequestParam(value = "orderBy", defaultValue = "name")String orderBy){
-		
-		PageRequest pageRequest = PageRequest
-				.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		
-		Page<ProductDTO> list = service.findAllPaged(pageRequest);
+	public ResponseEntity<Page<ProductDTO>> findAll(Pageable pageable){	
+		Page<ProductDTO> list = service.findAllPaged(pageable);
 		return ResponseEntity.ok().body(list);
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> findById(@PathVariable("id") Long id){
-		return ResponseEntity.ok().body(service.findByID(id));
+	public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
+		ProductDTO dto = service.findById(id);
+		return ResponseEntity.ok().body(dto);
 	}
 
 	
@@ -60,14 +54,14 @@ public class ProductResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO productDTO){
-		return ResponseEntity.ok().body(service.update(id, productDTO));
+	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+		dto = service.update(id, dto);
+		return ResponseEntity.ok().body(dto);
 	}
-
+	
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
 }

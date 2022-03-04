@@ -8,10 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.bertachini.btCatalog.dto.CategoryDTO;
 import com.bertachini.btCatalog.dto.ProductDTO;
@@ -33,9 +32,9 @@ public class ProductService {
 	
 	/*Busca lista de categorias dos produtos(todas) do catalago de banco de dados*/
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAllPaged(PageRequest pageRequest){				
-		return repository.findAll(pageRequest)
-				.map(x -> new ProductDTO(x));
+	public Page<ProductDTO> findAllPaged(Pageable pageable){				
+		Page<Product> list = repository.findAll(pageable);
+		return list.map(x -> new ProductDTO(x));
 		
 		//List<ProductDTO> list = repository.findaAll();
 		//return list.stram()...
@@ -54,11 +53,10 @@ public class ProductService {
 	}
 	
 	/*Busca categorias do catalago de banco de dados por ID do produto*/
-	@ExceptionHandler
 	@Transactional(readOnly = true)
-	public ProductDTO findByID(Long id) {
+	public ProductDTO findById(Long id) {
 		Optional<Product> obj = repository.findById(id);
-		Product entity = obj.orElseThrow(()-> new ResourceNotFoundException("Entity not found"));
+		Product entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 		return new ProductDTO(entity, entity.getCategories());
 	}
 	
@@ -82,7 +80,6 @@ public class ProductService {
 		}catch(EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
-	
 	}
 
 	public void delete(Long id) {
@@ -97,6 +94,7 @@ public class ProductService {
 	
 	
 	private void copyDtoToEntity(ProductDTO dto, Product entity) {
+
 		entity.setName(dto.getName());
 		entity.setDescription(dto.getDescription());
 		entity.setDate(dto.getDate());
@@ -104,16 +102,11 @@ public class ProductService {
 		entity.setPrice(dto.getPrice());
 		
 		entity.getCategories().clear();
-		
 		for (CategoryDTO catDto : dto.getCategories()) {
 			Category category = categoryRepository.getOne(catDto.getId());
-			entity.getCategories().add(category);
-		 	
+			entity.getCategories().add(category);			
 		}
-		
-	}
-	
-	
+	}	
 }
 
 	
