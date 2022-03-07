@@ -1,5 +1,8 @@
 package com.bertachini.btCatalog.dto;
 
+import com.bertachini.btCatalog.services.validation.UserInsertValid;
+
+@UserInsertValid
 public class UserInsertDTO extends UserDTO {
 	private static final long serialVersionUID = 1L;
 	
