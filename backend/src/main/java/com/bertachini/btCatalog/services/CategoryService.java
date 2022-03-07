@@ -47,7 +47,7 @@ public class CategoryService {
 		return new CategoryDTO(entity);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
 		//getOne não chega no banco de dados
 		try {

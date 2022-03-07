@@ -48,7 +48,7 @@ public class UserService {
 		return new UserDTO(responseUser);
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional
 	public UserDTO insert (UserInsertDTO dto) {
 		User entityUser = new User();
 		copyDtoToEntity(dto, entityUser);
@@ -57,7 +57,7 @@ public class UserService {
 		return new UserDTO(entityUser);
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional
 	public UserDTO update(Long id, UserDTO dto) {
 		try {
 			User entityUser = repository.getOne(id);

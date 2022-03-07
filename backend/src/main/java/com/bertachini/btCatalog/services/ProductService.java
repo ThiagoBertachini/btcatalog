@@ -60,7 +60,7 @@ public class ProductService {
 		return new ProductDTO(entity, entity.getCategories());
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional
 	public ProductDTO insert(ProductDTO dto) {
 		Product entity = new Product();
 		copyDtoToEntity(dto, entity);
@@ -69,7 +69,7 @@ public class ProductService {
 	}
 
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public ProductDTO update(Long id, ProductDTO dto) {
 		//getOne não chega no banco de dados
 		try {
