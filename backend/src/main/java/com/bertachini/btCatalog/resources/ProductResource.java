@@ -2,6 +2,8 @@ package com.bertachini.btCatalog.resources;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +45,7 @@ public class ProductResource {
 
 	
 	@PostMapping
-	public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO productDTO) {
+	public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO productDTO) {
 		productDTO = service.insert(productDTO);
 		
 		//Monstrar no cabeçario da resposta URL no request
@@ -54,7 +56,7 @@ public class ProductResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> update(@Valid @PathVariable Long id, @RequestBody ProductDTO dto) {
 		dto = service.update(id, dto);
 		return ResponseEntity.ok().body(dto);
 	}

@@ -49,7 +49,7 @@ public class UserService {
 	}
 	
 	@Transactional
-	public UserDTO insert (UserInsertDTO dto) {
+	public UserDTO insert(UserInsertDTO dto) {
 		User entityUser = new User();
 		copyDtoToEntity(dto, entityUser);
 		entityUser.setPassword(passwordEncoder.encode(dto.getPassword()));

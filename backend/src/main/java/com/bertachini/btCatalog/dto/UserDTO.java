@@ -4,14 +4,22 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import com.bertachini.btCatalog.entities.User;
 
 public class UserDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	@Size(max = 60, min = 2, message = "Name must be between 2-60")
+	@NotBlank(message = "firstname is required")
 	private String firstName;
 	private String lastName;
+	@Email(message = "Insert a valid e-mail")
 	private String email;
 	private String password;
 	

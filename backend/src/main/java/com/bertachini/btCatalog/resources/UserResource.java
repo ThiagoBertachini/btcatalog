@@ -3,6 +3,8 @@ package com.bertachini.btCatalog.resources;
 import org.springframework.data.domain.Pageable;
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +42,7 @@ public class UserResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDTO> save(@RequestBody UserInsertDTO userInsertRequestDTO){
+	public ResponseEntity<UserDTO> save(@Valid @RequestBody UserInsertDTO userInsertRequestDTO){
 		UserDTO userResponse = service.insert(userInsertRequestDTO);
 		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{/id}")
@@ -50,7 +52,7 @@ public class UserResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<UserDTO> update(@PathVariable Long id,@RequestBody UserDTO requestDTO){
+	public ResponseEntity<UserDTO> update(@Valid @PathVariable Long id,@RequestBody UserDTO requestDTO){
 		UserDTO responseUser = service.update(id, requestDTO);
 		return ResponseEntity.ok().body(responseUser);
 	}
