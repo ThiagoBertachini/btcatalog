@@ -19,7 +19,7 @@ public class Role implements Serializable{
 	private Long id;
 	private String authority;
 	
-	private Role() {
+	public Role() {
 	}
 
 	public Role(Long id, String authority) {
